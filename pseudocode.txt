@@ -1,0 +1,28 @@
+Notes from Assignment:
+    Next state transitions are stochastic
+        ->
+
+    Goal:
+        - uses Q-Learning to enable the robot to learn how to navigate from its starting
+          location in the bottom left corner to the goal location in the top right corner.
+
+    Alpha Value -> a decimal number between 0 and 1 to use for the learning rate 𝛼 in the Q-Learning update rule
+        Note from Assignment:
+            -> Note: if the user passes in a value of 0 for <alphaValue>, then your agent should instead use 𝛼 = 1 / 𝑛(𝑠, 𝑎) where 𝑛(𝑠, 𝑎) tracks the number of times the agent has thus far chosen action 𝑎 in state 𝑠. For this assignment, fix 𝛾 = 0.99.
+    Epsilon Value -> a decimal number between 0 and 1 to use for the exploration rate 𝜖 in the 𝜖-greedy exploration-exploitation algorithm
+
+    Grid Class:
+        1) generateStartState(), which returns the starting state for the robot
+        2) generateNextState(state, action), which takes in the current state and a
+                chosen action as parameters and returns a random next state for the agent
+        3) generateReward(state, action), which also takes in the current state and a chosen action as parameters and returns a reward for the agent (to use for reinforcing that action choice)
+
+
+Important Notes:
+    - Once the current state is equal to the ABSORBING_STATE, the agent has finished an episode
+        - This happens after the agent either reaches the goal or the pit
+        - MAKE SURE TO KEEP TRACK OF CUMULATIVE REWARD EARNED BY AGENT IN EPISODE
+    - Use Epsilon greedy to choose our actions
+    - Run agent 100 times each time program is executed and DO NOT reset the Q-Table [nor the 𝑛(𝑠, 𝑎) values] between these 100 episodes
+
+
