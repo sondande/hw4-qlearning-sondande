@@ -25,4 +25,10 @@ Important Notes:
     - Use Epsilon greedy to choose our actions
     - Run agent 100 times each time program is executed and DO NOT reset the Q-Table [nor the 𝑛(𝑠, 𝑎) values] between these 100 episodes
 
+Implementation steps and needed information:
+    -> Q-Learning:
+        -> Q-Learning update rule
+            - Generate
+        -> 𝜖-greedy algorithm
+            - chooses the action with the highest Q(s, a) with probability 1-ε
 

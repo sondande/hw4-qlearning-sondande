@@ -1,4 +1,5 @@
 import sys
+from grid import Grid
 
 # Get Alpha Value from arguments
 alphaValue = sys.argv[1]
@@ -11,3 +12,20 @@ if alphaValue == 0:
 
 # Get Epsilon Value from arguments
 epsilonValue = sys.argv[2]
+
+# Create grid object
+grid = Grid()
+
+# Store agent's start location
+startLocation = grid.generateStartState()
+
+"""
+Q - Learning Implementation
+    -> Uses:
+            -> Q-Learning Update Rule (Generates Q values)
+            -> 𝜖-greedy exploration-exploitation algorithm (Action Selection Algorithm)
+"""
+
+
+def q_learning():
+    return
