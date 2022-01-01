@@ -60,11 +60,21 @@ def q_learning():
         for counter in range(len(grid.actions)):
             # Use Q-learning updating rule to generate Q values for possible actions
 
-            # TODO edit formula used for setting Q_value to have e-greedy choose action and then use that chosen action for state 's' to be used in the Q_Table value calculations
-            q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * max([grid.generateNextState(currentState, grid.actions[x]) for x in range(4)])))))
+            # Creating list for all possible next state rewards 
+            nsRewards = [grid.generateNextState(currentState, grid.actions[x]) for x in range(4)]
 
-            # Current state - Action
-            # generate to get the next_current_state, we go through all it's possible actions
+            # Generating random value between 0 and 1
+            rval = random.random()
+            
+            # If we generated a number less than our epsilon value
+            if(rval < epsilonValue):
+                # Randomly pick an action
+                randomVal = random.choice(nsRewards)
+                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * randomVal))))
+            else:
+                # Otherwise pick the action that has the max value
+                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * max(nsRewards)))))
+            
 
 
 
