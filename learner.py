@@ -81,8 +81,8 @@ def q_learning():
                 curraction = maxaction
                 selaction = q_action_list[selactionnum]
                 q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * curraction))))
-                
-        print(selaction)
+            
+            q_table[currentState][counter] = q_value
 
 
     return ""
