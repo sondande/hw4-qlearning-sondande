@@ -33,7 +33,7 @@ Q - Learning Implementation
     
 """
 
-print(grid.actions)
+print(startState)
 
 # Personal notes: not adding all states into Q table allows us to only worry about states we go down and limit the
 # search. We also reduce the error where we add the obstacle states or pits into our Q table
@@ -54,6 +54,7 @@ def q_learning():
             q_table[currentState] = q_action_list
         # Note: Since we use the generateNextState to get our next state, we can check if the state we are looking at
         # exists in our table
+        # if is in q_table.keys() update values
 
         # Generate Q values for currentState
         for counter in range(len(grid.actions)):
@@ -62,8 +63,12 @@ def q_learning():
             # TODO edit formula used for setting Q_value to have e-greedy choose action and then use that chosen action for state 's' to be used in the Q_Table value calculations
             q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * max([grid.generateNextState(currentState, grid.actions[x]) for x in range(4)])))))
 
-
+            # Current state - Action
+            # generate to get the next_current_state, we go through all it's possible actions
 
 
 
     return ""
+
+
+

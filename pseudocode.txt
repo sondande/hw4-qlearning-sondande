@@ -33,7 +33,6 @@ Implementation steps and needed information:
             - chooses the action with the highest Q(s, a) with probability 1-ε
 
 Stand Q-Learning Algorithm:
-
     Initialize the Q(s, a) values for known state/action pairs
         Often start at 0 or random values close to 0
 
