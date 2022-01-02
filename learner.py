@@ -1,8 +1,9 @@
 import sys
 from grid import Grid
+import random
 
 # Get Alpha Value from arguments
-alphaValue = sys.argv[1]
+alphaValue = float(sys.argv[1])
 
 # Case given in Assignment Instructions. Look at pseudocode.txt for quote
 if alphaValue == 0:
@@ -11,7 +12,7 @@ if alphaValue == 0:
     alphaValue = 0
 
 # Get Epsilon Value from arguments
-epsilonValue = sys.argv[2]
+epsilonValue = float(sys.argv[2])
 
 # Create Grid Object
 grid = Grid()
@@ -34,7 +35,6 @@ Q - Learning Implementation
 """
 
 print(startState)
-
 # Personal notes: not adding all states into Q table allows us to only worry about states we go down and limit the
 # search. We also reduce the error where we add the obstacle states or pits into our Q table
 
@@ -48,7 +48,7 @@ def q_learning():
 
     q_table = {currentState: q_action_list}
     # Repeat until done acting in the world
-    while currentState == grid.ABSORBING_STATE:
+    while currentState != grid.ABSORBING_STATE:
         # Initialize the Q(s, a) values for known state/action pairs
         if currentState not in q_table.keys():
             q_table[currentState] = q_action_list
@@ -62,30 +62,32 @@ def q_learning():
 
             # Generating random value between 0 and 1
             rval = random.random()
-            
+
+            nextState = grid.generateNextState(currentState, grid.actions[counter])
             # If we generated a number less than our epsilon value
             if(rval < epsilonValue):
                 # Randomly pick an action
                 randomval = random.randint(0,3)
                 selaction = q_action_list[randomval]
-                curraction = grid.generateNextState(currentState, grid.actions[randomval])
-                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * curraction))))
+                curraction = grid.generateReward(nextState, grid.actions[x])
+                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
             else:
                 # Otherwise pick the action that has the max value
-                maxaction = grid.generateNextState(currentState, grid.actions[0]
+                maxaction = grid.generateReward(nextState, grid.actions[0])
                 selactionnum = 0
                 for x in range(1,4):
-                    if(grid.generateNextState(currentState, grid.actions[x]) > maxaction):
-                        maxaction = grid.generateNextState(currentState, grid.actions[x])
+                    if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
+                        maxaction = grid.generateReward(nextState, grid.actions[x])
                         selactionum = x
                 curraction = maxaction
                 selaction = q_action_list[selactionnum]
-                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter] + (0.99 * curraction))))
-            
+                q_value = ((1 - alphaValue) * q_table[currentState][counter]) + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
+            print("Q Value: ", q_value)
             q_table[currentState][counter] = q_value
 
+    print(q_table)
+    return q_table
 
-    return ""
-
+q_learning()
 
 
