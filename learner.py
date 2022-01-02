@@ -69,7 +69,7 @@ def q_learning():
                 # Randomly pick an action
                 randomval = random.randint(0,3)
                 selaction = q_action_list[randomval]
-                curraction = grid.generateReward(nextState, grid.actions[x])
+                curraction = grid.generateReward(nextState, selaction)
                 q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
             else:
                 # Otherwise pick the action that has the max value
