@@ -43,7 +43,7 @@ def q_learning():
     currentState = startState
     # Initializing Q_table with action list: given knowledge that there are 4 possible action choices
     # Indexes are associated with the following ['up', 'down', 'left', 'right']
-    q_action_list = []
+    q_action_list = [0.0, 0.0, 0.0, 0.0]
 
     q_table = {currentState: q_action_list}
     # Repeat until done acting in the world
