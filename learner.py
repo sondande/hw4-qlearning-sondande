@@ -82,11 +82,15 @@ def q_learning():
                 curraction = maxaction
                 selaction = q_action_list[selactionnum]
                 q_value = ((1 - alphaValue) * q_table[currentState][counter]) + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
-            print("Q Value: ", q_value)
+            ##print("Q Value: ", q_value)
             q_table[currentState][counter] = q_value
-    print(q_table[currentState])
+        maxQ = max(q_table[currentState])
+        maxDecision = q_table[currentState].index(maxQ)
+        currentState = grid.generateNextState(currentState, grid.actions[maxDecision])
+        print(currentState)
     return q_table
 
-q_learning()
+for i in range(100):
+    q_learning()
 
 
