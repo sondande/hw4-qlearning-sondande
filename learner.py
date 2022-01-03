@@ -22,6 +22,11 @@ startState = grid.generateStartState()
 #print(startState)
 # Personal notes: not adding all states into Q table allows us to only worry about states we go down and limit the
 # search. We also reduce the error where we add the obstacle states or pits into our Q table
+
+#BELOW IS COMMENTED OUT CODE FOR THE FOLLOWING EDITS I TRIED TO MAKE AND THEN GOT WORSE RESULTS:
+    #Picking based on reward to current action as opposed to two actions ahead
+    #Seperating action and epsilon greedy decisions into their own function 
+    #Pulled q_table out of the q leaning function
 """ def find_best_action(currstate, q_table):
     rval = random.random()
     if(rval < epsilonValue):
@@ -80,6 +85,7 @@ q_action_list = [0.0, 0.0, 0.0, 0.0]
 q_table = {startState: q_action_list}
 q_learning(q_table) """
 
+#BELOW IS THE ORIGINAL CODE WHICH DOESN'T WORK BUT GIVES FAR BETTER RESULTS
 def q_learning():
     # Initializing currentState to startState value
     currentState = startState
