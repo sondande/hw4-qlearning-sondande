@@ -44,7 +44,7 @@ def q_learning():
 
     # Initializing Q_table with action list: given knowledge that there are 4 possible action choices
     # Indexes are associated with the following ['up', 'down', 'left', 'right']
-    q_action_list = [0.0, 0.0, 0.0, 0.0]
+    q_action_list = []
 
     q_table = {currentState: q_action_list}
     # Repeat until done acting in the world
@@ -62,6 +62,9 @@ def q_learning():
 
             # Generating random value between 0 and 1
             rval = random.random()
+
+            # Add to action list
+            q_action_list.append(rval);
 
             nextState = grid.generateNextState(currentState, grid.actions[counter])
             # If we generated a number less than our epsilon value

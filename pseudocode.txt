@@ -40,3 +40,16 @@ Stand Q-Learning Algorithm:
     2. Choose an action a based on the Q(s, a) values
     3. Observe the next state s’ and reward r
     4. Update the value of Q(s, a) using s, a, s’, r
+
+
+    (s, a) => [(0,0), "up"]
+
+
+
+Next steps:
+
+making function for exploration to run the 100 iteration
+
+change method for q learning to take in a q table so don't lose the values or create a new table that deletes them. # Allows us to learn from past itereations
+
+Change action list to just append the new Q values for the action chosen from for the currentState instead of assigning right off the bat the [0.0, etc.]
