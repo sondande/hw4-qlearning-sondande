@@ -41,56 +41,59 @@ print(startState)
 def q_learning():
     # Initializing currentState to startState value
     currentState = startState
-
     # Initializing Q_table with action list: given knowledge that there are 4 possible action choices
     # Indexes are associated with the following ['up', 'down', 'left', 'right']
     q_action_list = [0.0, 0.0, 0.0, 0.0]
 
     q_table = {currentState: q_action_list}
     # Repeat until done acting in the world
-    while currentState != grid.ABSORBING_STATE:
-        # Initialize the Q(s, a) values for known state/action pairs
-        if currentState not in q_table.keys():
-            q_table[currentState] = q_action_list
-        # Note: Since we use the generateNextState to get our next state, we can check if the state we are looking at
-        # exists in our table
-        # if is in q_table.keys() update values
+    for i in range(100):
+        currentState = startState
+        numsteps = 0
+        while currentState != grid.ABSORBING_STATE:
+            numsteps+=1
+            # Initialize the Q(s, a) values for known state/action pairs
+            if currentState not in q_table.keys():
+                q_table[currentState] = q_action_list
+            # Note: Since we use the generateNextState to get our next state, we can check if the state we are looking at
+            # exists in our table
+            # if is in q_table.keys() update values
 
-        # Generate Q values for currentState
-        for counter in range(len(grid.actions)):
-            # Use Q-learning updating rule to generate Q values for possible actions
+            # Generate Q values for currentState
 
-            # Generating random value between 0 and 1
-            rval = random.random()
+            for counter in range(len(grid.actions)):
+                # Use Q-learning updating rule to generate Q values for possible actions
 
-            nextState = grid.generateNextState(currentState, grid.actions[counter])
-            # If we generated a number less than our epsilon value
-            if(rval < epsilonValue):
-                # Randomly pick an action
-                randomval = random.randint(0,3)
-                selaction = grid.actions[randomval]
-                curraction = grid.generateReward(nextState, selaction)
-                q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
-            else:
-                # Otherwise pick the action that has the max value
-                maxaction = grid.generateReward(nextState, grid.actions[0])
-                selactionnum = 0
-                for x in range(1,4):
-                    if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
-                        maxaction = grid.generateReward(nextState, grid.actions[x])
-                        selactionum = x
-                curraction = maxaction
-                selaction = q_action_list[selactionnum]
-                q_value = ((1 - alphaValue) * q_table[currentState][counter]) + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
-            ##print("Q Value: ", q_value)
-            q_table[currentState][counter] = q_value
-        maxQ = max(q_table[currentState])
-        maxDecision = q_table[currentState].index(maxQ)
-        currentState = grid.generateNextState(currentState, grid.actions[maxDecision])
-        print(currentState)
+                # Generating random value between 0 and 1
+
+                rval = random.random()
+                q_action_list[counter] = 0.0
+                nextState = grid.generateNextState(currentState, grid.actions[counter])
+                # If we generated a number less than our epsilon value
+                if(rval < epsilonValue):
+                    # Randomly pick an action
+                    randomval = random.randint(0,3)
+                    selaction = grid.actions[randomval]
+                    curraction = grid.generateReward(nextState, selaction)
+                    q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
+                else:
+                    # Otherwise pick the action that has the max value
+                    maxaction = grid.generateReward(nextState, grid.actions[0])
+                    selactionnum = 0
+                    for x in range(1,4):
+                        if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
+                            maxaction = grid.generateReward(nextState, grid.actions[x])
+                            selactionum = x
+                    curraction = maxaction
+                    selaction = grid.actions[selactionnum]
+                    q_value = ((1 - alphaValue) * q_table[currentState][counter]) + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
+                q_table[currentState][counter] = q_value
+            maxQ = max(q_table[currentState])
+            maxDecision = q_table[currentState].index(maxQ)
+            currentState = grid.generateNextState(currentState, grid.actions[maxDecision])
+        print(numsteps)
     return q_table
 
-for i in range(100):
-    q_learning()
+q_learning()
 
 
