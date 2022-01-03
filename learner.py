@@ -68,7 +68,7 @@ def q_learning():
             if(rval < epsilonValue):
                 # Randomly pick an action
                 randomval = random.randint(0,3)
-                selaction = q_action_list[randomval]
+                selaction = grid.actions[randomval]
                 curraction = grid.generateReward(nextState, selaction)
                 q_value = (1 - alphaValue) * q_table[currentState][counter] + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
             else:
@@ -84,8 +84,7 @@ def q_learning():
                 q_value = ((1 - alphaValue) * q_table[currentState][counter]) + (alphaValue * (grid.generateReward(currentState, grid.actions[counter]) + (0.99 * curraction)))
             print("Q Value: ", q_value)
             q_table[currentState][counter] = q_value
-
-    print(q_table)
+    print(q_table[currentState])
     return q_table
 
 q_learning()
