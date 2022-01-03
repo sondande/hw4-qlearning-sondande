@@ -19,24 +19,66 @@ grid = Grid()
 
 # Store Agent's Start State
 startState = grid.generateStartState()
-
-# TODO think of possible data structure to keep track of how many times the s,a pair has been gone down. Dictionary with state as key and array as value? 2D arrays?
-# n(s,a) dictionary initialized with key being state and value is an array of size 4 with counter of how many times the pair has been gone down
-
-# n_dict = {}
-
-"""
-Q - Learning Implementation
-    -> Uses:
-            -> Q-Learning Update Rule (Generates Q values)
-            -> 𝜖-greedy exploration-exploitation algorithm (Action Selection Algorithm)
-    -> Q Table => has 4 possible actions 
-    
-"""
-
 #print(startState)
 # Personal notes: not adding all states into Q table allows us to only worry about states we go down and limit the
 # search. We also reduce the error where we add the obstacle states or pits into our Q table
+""" def find_best_action(currstate, q_table):
+    rval = random.random()
+    if(rval < epsilonValue):
+        # Randomly pick an action
+        randomval = random.randint(0,3)
+        return [randomval, grid.actions[randomval]]
+    else:
+        randomval = random.randint(0,3)
+        bestaction = grid.actions[randomval]
+        bestactionval = grid.generateReward(currstate, bestaction)
+        bestactionnum = randomval
+        for counter in range(len(grid.actions)):
+            if(grid.generateReward(currstate, grid.actions[counter]) > bestactionval):
+                bestaction = grid.actions[counter]
+                bestactionnum = counter
+                bestactionval = grid.generateReward(currstate, bestaction)
+        return [counter, bestaction]
+
+def q_learning(q_table):
+    # Initializing currentState to startState value
+    currentState = startState
+    # Initializing Q_table with action list: given knowledge that there are 4 possible action choices
+    # Indexes are associated with the following ['up', 'down', 'left', 'right']
+    # Repeat until done acting in the world
+
+    highestUtility = -100000
+
+    for i in range(100):
+        currentState = startState
+        totalUtil = 0
+        while currentState != grid.ABSORBING_STATE:
+            # Initialize the Q(s, a) values for known state/action pairs
+            if currentState not in q_table.keys():
+                q_table[currentState] = q_action_list
+            action_list = find_best_action(currentState, q_table)
+            action = action_list[1]
+            actionnum = action_list[0]
+            reward = grid.generateReward(currentState, action)
+            totalUtil += reward
+            nextState = grid.generateNextState(currentState, action)
+            if nextState not in q_table.keys():
+                q_table[nextState] = q_action_list
+            randomval2 = random.randint(0,3)
+            maxaction = grid.generateReward(nextState, grid.actions[randomval2])
+            selactionnum = randomval2
+            for x in range(0,4):
+                if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
+                    maxaction = grid.generateReward(nextState, grid.actions[x])
+                    selactionnum = x
+            q_table[currentState][actionnum] = (1 - alphaValue) * q_table[currentState][actionnum]  + alphaValue * (reward + 0.99 * q_table[nextState][selactionnum])
+            currentState = nextState
+        if(totalUtil > highestUtility):
+            highestUtility = totalUtil
+    print(highestUtility)
+q_action_list = [0.0, 0.0, 0.0, 0.0]
+q_table = {startState: q_action_list}
+q_learning(q_table) """
 
 def q_learning():
     # Initializing currentState to startState value
@@ -52,10 +94,8 @@ def q_learning():
 
     for i in range(100):
         currentState = startState
-        numsteps = 0
         totalUtil = 0
         while currentState != grid.ABSORBING_STATE:
-            numsteps+=1
             # Initialize the Q(s, a) values for known state/action pairs
             if currentState not in q_table.keys():
                 q_table[currentState] = q_action_list
@@ -69,22 +109,23 @@ def q_learning():
                 # Randomly pick an action
                 randomval = random.randint(0,3)
                 nextState = grid.generateNextState(currentState, grid.actions[randomval])
-                for x in range(1,4):
-                    maxaction = grid.generateReward(nextState, grid.actions[0])
-                    selactionnum = 0
+                if nextState not in q_table.keys():
+                    q_table[nextState] = q_action_list
+                curraction = grid.generateReward(currentState, grid.actions[randomval])
+                randomval2 = random.randint(0,3)
+                maxaction = grid.generateReward(nextState, grid.actions[randomval2])
+                selactionnum = randomval2
+                for x in range(0,4):
                     if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
-                            maxaction = grid.generateReward(nextState, grid.actions[x])
-                            selactionum = x
-                futureaction = grid.generateReward(nextState, grid.actions[selactionnum])
-                q_value = ((1 - alphaValue) * q_table[currentState][randomval]) + (alphaValue * (grid.generateReward(currentState, grid.actions[randomval]) + (0.99 * futureaction)))
-                q_table[currentState][randomval] = q_value
+                        maxaction = grid.generateReward(nextState, grid.actions[x])
+                        selactionnum = x
+                q_table[currentState][randomval] = (1 - alphaValue) * q_table[currentState][randomval] + alphaValue * (grid.generateReward(currentState, grid.actions[randomval]) + 0.99 * q_table[nextState][selactionnum])
                 currentState = nextState
                 totalUtil += curraction
             else:
                 for counter in range(len(grid.actions)):
                     # Use Q-learning updating rule to generate Q values for possible actions
                     # Generating random value between 0 and 1
-                    q_action_list[counter] = 0.0
                     #print(grid.actions[counter])
                     nextState = grid.generateNextState(currentState, grid.actions[counter])
                     if nextState not in q_table.keys():
@@ -94,15 +135,12 @@ def q_learning():
                     maxaction = grid.generateReward(nextState, grid.actions[0])
                     selactionnum = 0
                     for x in range(1,4):
-                        #print(nextState)
-                        #print(grid.actions[x], grid.generateReward(nextState, grid.actions[x]))
                         if(grid.generateReward(nextState, grid.actions[x]) > maxaction):
                             maxaction = grid.generateReward(nextState, grid.actions[x])
-                            selactionum = x
+                            selactionnum = x
                     curraction = maxaction
                     selaction = grid.actions[selactionnum]
-                    q_value = ((1 - alphaValue) * q_table[currentState][selactionnum]) + (alphaValue * (grid.generateReward(currentState, selaction) + (0.99 * curraction)))
-                    q_table[currentState][counter] = q_value
+                    q_table[currentState][counter] = (1 - alphaValue) * q_table[currentState][counter] + alphaValue * (grid.generateReward(currentState, grid.actions[counter] ) + (0.99 * q_table[nextState][selactionnum]))
                 maxQ = max(q_table[currentState])
                 maxDecision = q_table[currentState].index(maxQ)
                 currutil = grid.generateReward(currentState, grid.actions[maxDecision])
@@ -111,9 +149,8 @@ def q_learning():
         print(totalUtil)
         if(totalUtil > highestUtility):
             highestUtility = totalUtil
-    print(highestUtility)
-    return q_table
 
 q_learning()
+
 
 
