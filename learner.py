@@ -1,4 +1,6 @@
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
 from grid import Grid
 import random
 
@@ -14,7 +16,6 @@ grid = Grid()
 # Store Agent's Start State
 startState = grid.generateStartState()
 
-
 # Initializing n dictionary for (State, Action): number of times gone to action
 
 # BELOW IS COMMENTED OUT CODE FOR THE FOLLOWING EDITS I TRIED TO MAKE AND THEN GOT WORSE RESULTS:
@@ -22,11 +23,42 @@ startState = grid.generateStartState()
 # Seperating action and epsilon greedy decisions into their own function
 # Pulled q_table out of the q leaning function
 
+"""
+    Creating an array from data collected in q_learning
+    Optional use to get line chart of values
+"""
+
+
+def readFile(filename):
+    # opens the file in read mode
+    file = open(filename, "r")
+    # puts the file into an array
+    y_values = file.read().splitlines()
+    file.close()
+    return y_values
+
 
 """
-    Implementation of 𝜖-greedy exploration-exploitation algorithm to help us find the best action choice for our current
-    state
+Saving Information from Q-Learning to a File 
+"""
 
+
+def reward_save(filename, total_utility):
+    """Append given text as a new line at the end of file"""
+    # Open the file in append & read mode ('a+')
+    with open(filename, "a+") as file_object:
+        # Move read cursor to the start of file.
+        file_object.seek(0)
+        # If file is not empty then append '\n'
+        data = file_object.read(100)
+        if len(data) > 0:
+            file_object.write("\n")
+        # Append text at the end of file
+        file_object.write(total_utility)
+
+
+"""
+    Implementation of 𝜖-greedy exploration-exploitation algorithm to find the best action for current state
 """
 
 
@@ -35,7 +67,7 @@ def find_best_action(currstate, q_table):
     rval = random.random()
     # Compare with input epsilon value and see if we do exploration or exploitation
     # If random value is less epsilon value, perform exploration by choosing a random action
-    if (rval < epsilonValue):
+    if rval < epsilonValue:
         # Randomly pick an action
         randomval = random.randint(0, 3)
         return [randomval, grid.actions[randomval]]
@@ -49,12 +81,20 @@ def find_best_action(currstate, q_table):
         return [maxDecision, grid.actions[maxDecision]]
 
 
+"""
+    Implementation of Q-learning Algorithm
+    Takes in established Q values in Q_table and n_dict that holds the amount of times a current state chose an action
+    Utilizes:
+        Alpha Value (learning rate 𝛼 in the Q-Learning update rule)
+        Epsilon Value (exploration rate 𝜖 in the 𝜖-greedy exploration-exploitation algorithm)
+    Finds the highest utility from all episodes of the world done, Q values, and overall times
+    Stores information in policy file for further use
+"""
+
+
 def q_learning(q_table, n_dict):
-    # Initializing currentState to startState value
-    # currentState = startState
     # Initializing Q_table with action list: given knowledge that there are 4 possible action choices
     # Indexes are associated with the following ['up', 'down', 'left', 'right']
-    # Repeat until done acting in the world
 
     highestUtility = -100000
 
@@ -64,7 +104,7 @@ def q_learning(q_table, n_dict):
 
         totalUtil = 0
         # Loop to keep us exploring until our currentState is equal to the Goal State. Indicating that we are done
-        # exploring for this episode
+        # Exploring for this episode and repeats until done acting in the world
         while currentState != grid.ABSORBING_STATE:
             # Checks if currentState exists in Q_table. If not, adds it with default values. Allows us to use prior
             # values for learning through each episode
@@ -110,14 +150,16 @@ def q_learning(q_table, n_dict):
                 alpha_value = alphaValue
             # Use Q-Learning Update Rule to find overall Q value for current state and action stored in Q Table
             q_table[currentState][actionnum] = (1 - alpha_value) * q_table[currentState][actionnum] + alpha_value * (
-                        reward + 0.99 * max(q_table[nextState]))
+                    reward + 0.99 * max(q_table[nextState]))
             # Set next current State
             currentState = nextState
 
         print(totalUtil)
+        reward_save("q_learning_data_5.txt", str(totalUtil))
         # Stores the highest utility our of all episodes
         if totalUtil > highestUtility:
             highestUtility = totalUtil
+    print("highest", highestUtility)
 
 
 # Initialize Q Table including startState with default values
@@ -127,8 +169,52 @@ q_table = {startState: [0.0, 0.0, 0.0, 0.0]}
 # Key: [state, action] Value: # of times state chosen action
 n_dict = {}
 
+# Clearing file before running program
+# with open("q_learning_data.txt", 'r+') as f:
+#     f.truncate(0)
+
 # Run Program
 q_learning(q_table, n_dict)
+
+# # Plotting Graph Section
+# plt.title("Experiment #1: Changing Alpha")
+#
+# # Storing data in arrays
+# x = list(range(100))
+# y = list(readFile("q_learning_data.txt"))
+#
+# # Using Matplotlib to plot data in line 1 0.9
+# plt.plot(x, y, label="a = 0.9")
+#
+# # Storing data in arrays
+# x = list(range(100))
+# y = list(readFile("q_learning_data_2.txt"))
+#
+# # Using Matplotlib to plot data in line 2 0.65
+# plt.plot(x, y, label="a = 0.65")
+#
+# # Storing data in arrays
+# x = list(range(100))
+# y = list(readFile("q_learning_data_3.txt"))
+#
+# # Using Matplotlib to plot data in line 3
+# plt.plot(x, y, label="a =0.5")
+#
+# # Storing data in arrays
+# x = list(range(100))
+# y = list(readFile("q_learning_data_4.txt"))
+#
+# # Using Matplotlib to plot data in line 4
+# plt.plot(x, y, label="a = 0.25")
+#
+# # Storing data in arrays
+# x = list(range(100))
+# y = list(readFile("q_learning_data_5.txt"))
+#
+# # Using Matplotlib to plot data in line 5
+# plt.plot(x, y, label="a = 0")
+# plt.legend()
+# plt.show()
 
 # BELOW IS THE ORIGINAL CODE WHICH DOESN'T WORK BUT GIVES FAR BETTER RESULTS
 """ def q_learning():
