@@ -5,12 +5,6 @@ import random
 # Get Alpha Value from arguments
 alphaValue = float(sys.argv[1])
 
-# Case given in Assignment Instructions. Look at pseudocode.txt for quote
-if alphaValue == 0:
-    # TODO apply n(s,a) function to get value. Check pseudocode notes for purpose of function
-    # alphaValue = 1 / n(s,a)
-    alphaValue = 0
-
 # Get Epsilon Value from arguments
 epsilonValue = float(sys.argv[2])
 
@@ -27,10 +21,6 @@ startState = grid.generateStartState()
 # Picking based on reward to current action as opposed to two actions ahead
 # Seperating action and epsilon greedy decisions into their own function
 # Pulled q_table out of the q leaning function
-
-# returns value found in n_dict for current state and action
-def n(s, a):
-    return
 
 
 """
@@ -71,6 +61,7 @@ def q_learning(q_table, n_dict):
     for i in range(100):
         # Initializing currentState to startState location and our total utility for current episode
         currentState = startState
+
         totalUtil = 0
         # Loop to keep us exploring until our currentState is equal to the Goal State. Indicating that we are done
         # exploring for this episode
@@ -86,22 +77,45 @@ def q_learning(q_table, n_dict):
             action = action_list[1]
             # Stores unique identifier of action
             actionnum = action_list[0]
+            # Store the reward for our current state and the current chosen action
             reward = grid.generateReward(currentState, action)
+            # Add to our total utility
             totalUtil += reward
+            Value = n_dict.keys()
+            # Add chosen state count to n_dict to keep track of progress
+            if (currentState, action) in n_dict.keys():
+                n_dict[(currentState, action)] += 1
+            else:
+                n_dict[(currentState, action)] = 1
+            # Generate a random next state after we take an action for our current state
             nextState = grid.generateNextState(currentState, action)
+            # Check to see if nextState is a place we've explored. If not, set default values
             if nextState not in q_table.keys():
                 q_table[nextState] = [0.0, 0.0, 0.0, 0.0]
+            # Choose a random action from action list
             randomval2 = random.randint(0, 3)
+            # Set the reward for action chosen by random as the max action
             maxaction = grid.generateReward(nextState, grid.actions[randomval2])
+            # Go through all rewards for each action chose for the nextState and store the largest reward and action
             selactionnum = randomval2
             for x in range(0, 4):
                 if grid.generateReward(nextState, grid.actions[x]) > maxaction:
                     maxaction = grid.generateReward(nextState, grid.actions[x])
                     selactionnum = x
-            q_table[currentState][actionnum] = (1 - alphaValue) * q_table[currentState][actionnum] + alphaValue * (
+
+            # Checks if user input for alpha value is 0. If so, we calculate the alpha value, if not, use input value
+            if alphaValue == 0:
+                alpha_value = 1 / n_dict[(currentState, action)]
+            else:
+                alpha_value = alphaValue
+            # Use Q-Learning Update Rule to find overall Q value for current state and action stored in Q Table
+            q_table[currentState][actionnum] = (1 - alpha_value) * q_table[currentState][actionnum] + alpha_value * (
                         reward + 0.99 * max(q_table[nextState]))
+            # Set next current State
             currentState = nextState
+
         print(totalUtil)
+        # Stores the highest utility our of all episodes
         if totalUtil > highestUtility:
             highestUtility = totalUtil
 
@@ -114,7 +128,7 @@ q_table = {startState: [0.0, 0.0, 0.0, 0.0]}
 n_dict = {}
 
 # Run Program
-q_learning(q_table)
+q_learning(q_table, n_dict)
 
 # BELOW IS THE ORIGINAL CODE WHICH DOESN'T WORK BUT GIVES FAR BETTER RESULTS
 """ def q_learning():
